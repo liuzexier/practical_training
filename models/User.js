@@ -13,7 +13,10 @@ User.init({
     phone: Sequelize.STRING(15),
     address_id: Sequelize.INTEGER(11),
     paypin: Sequelize.STRING(6),
-    avatar: Sequelize.STRING(50),
+    avatar: {
+        type:Sequelize.STRING(50),
+        defaultValue:'/img/default_avatar.png'
+    },
 }, {
     sequelize,
     modelName: 'user',

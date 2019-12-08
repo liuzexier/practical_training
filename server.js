@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser')
 const app = express();
+app.use(express.static('assets'))
 
 // 引入user
 const users = require('./routers/api/users')

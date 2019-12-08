@@ -3,6 +3,7 @@ const express = require('express')
 const router = express.Router()
 const { User, Op } = require('../../models/User')
 const bcrypt = require('bcrypt')
+// const gravatar = require('gravatar')
 
 /**
  * $router GET /api/users/test
@@ -39,14 +40,14 @@ router.post('/register', (req, res) => {
                     });
                 });
             }).then(req => {
+                // const avatar = gravatar.url('emerleite@gmail.com', { s: '200', r: 'pg', d: 'mm' });
                 User.create({
                     name: req.body.name,
                     password: req.body.password,
                     email: req.body.email,
                     phone: req.body.phone,
                     address_id: null,
-                    paypin: null,
-                    avatar: null
+                    paypin: null
                 }).then(user => {
                     // console.log(user)
                     return res.status(200).json({ status: 0, msg: '注册成功', data: { user } })
