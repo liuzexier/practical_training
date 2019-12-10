@@ -11,6 +11,7 @@ User.init({
     password: Sequelize.STRING(20),
     email: Sequelize.STRING(20),
     phone: Sequelize.STRING(15),
+    identity:Sequelize.STRING(20),
     address_id: Sequelize.INTEGER(11),
     paypin: Sequelize.STRING(6),
     avatar: {
