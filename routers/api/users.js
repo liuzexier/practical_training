@@ -39,7 +39,8 @@ router.post('/signup', (req, res) => {
                     password: req.body.password,
                     email: req.body.email,
                     phone: req.body.phone,
-                    paypin: null
+                    paypin: null,
+                    identity: 'admin'
                 }).then(user => {
                     return res.status(200).json({ status: 0, msg: '注册成功', data: { user } })
                 })
@@ -61,7 +62,7 @@ router.post('/signin', (req, res) => {
     User.findOne({
         where: {
             [Op.or]: [
-                { email: email }, { phone: phone }
+                { email: email }, { phone: phone }, { identity: 'user' }
             ]
         }
     }).then(user => {
@@ -89,7 +90,7 @@ router.post('/signin', (req, res) => {
  * @desc return current user
  * @access  private
  */
-router.get('/current', passport.authenticate("jwt", { session: false }), (req, res) => {
+router.get('/getInfo', passport.authenticate("jwt", { session: false }), (req, res) => {
     return res.json({
         status: 1, msg: '请求成功', data: {
             user: {
@@ -102,5 +103,6 @@ router.get('/current', passport.authenticate("jwt", { session: false }), (req, r
         }
     })
 })
+
 
 module.exports = router

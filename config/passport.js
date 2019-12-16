@@ -28,23 +28,5 @@ module.exports = {
                 console.log(err)
             })
         }));
-    },
-    adminPassport: function (passport) {
-        passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
-            // console.log(jwt_payload)
-            Admin.findOne({
-                where: {
-                    id: jwt_payload.id
-                }
-            }).then(admin => {
-                if (admin) {
-                    return done(null, admin)
-                } else {
-                    return done(null, false)
-                }
-            }).catch(err => {
-                console.log(err)
-            })
-        }));
     }
 }
