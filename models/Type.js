@@ -7,6 +7,7 @@ Type.init({
     },
     name: Sequelize.STRING(20)
 }, {
+    underscored: true,
     sequelize,
     modelName: 'type',
     timestamps: false

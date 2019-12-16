@@ -11,6 +11,8 @@ const users = require('./routers/api/users')
 const admins = require('./routers/api/admins')
 // 引入types
 const types = require('./routers/api/types')
+// 引入goods
+const goods = require('./routers/api/goods')
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
@@ -35,6 +37,7 @@ app.all('*', function (req, res, next) {
 app.use('/api/users', users)
 app.use('/api/admins', admins)
 app.use('/api/types', types)
+app.use('/api/goods', goods)
 
 const port = process.env.PORT || 5000
 
