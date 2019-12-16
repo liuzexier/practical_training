@@ -15,14 +15,15 @@ Goods.belongsTo(Type, { foreignKey: 'type_id', as: 'goodstype' })
  */
 router.get('/findbypage', (req, res) => {
     // return res.status(200).json({msg:'succ'})
-    let page = req.body.page || 0
-    let pageSize = req.body.pageSize || 10
+    let page = Number(req.query.page) || 1
+    let pageSize = Number(req.query.pageSize) || 10
+    // console.log(req.query)
     Goods.findAndCountAll({
         include: {
             model: Type,
             as: 'goodstype'
         },
-        offset: page * pageSize,//开始的数据索引，比如当page=2 时offset=10 ，而pagesize我们定义为10，则现在为索引为10，也就是从第11条开始返回数据条目
+        offset: (page - 1) * pageSize,//开始的数据索引，比如当page=2 时offset=10 ，而pagesize我们定义为10，则现在为索引为10，也就是从第11条开始返回数据条目
         limit: pageSize//每页限制返回的数据条数
     }).then(data => {
         res.json({ status: 1, msg: '查询成功', data: data })
