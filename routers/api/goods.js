@@ -3,11 +3,14 @@ const router = express.Router()
 const { Goods, Op } = require('../../models/Goods')
 const { Type } = require('../../models/Type')
 const passport = require('passport')
+const { Img } = require('../../models/Img')
 
 // hasMany
 Type.hasMany(Goods, { foreignKey: 'type_id', as: 'goods' })
 //belongsTo
 Goods.belongsTo(Type, { foreignKey: 'type_id', as: 'goodstype' })
+// hasMany
+Goods.hasMany(Img, { foreignKey: 'goods_id', as: 'imgs' })
 
 /**
  * $router GET /api/goods/findbypage
@@ -20,10 +23,13 @@ router.get('/findbypage', (req, res) => {
     let pageSize = Number(req.query.pageSize) || 10
     // console.log(req.query)
     Goods.findAndCountAll({
-        include: {
+        include: [{
             model: Type,
             as: 'goodstype'
-        },
+        }, {
+            model: Img,
+            as: 'imgs'
+        }],
         offset: (page - 1) * pageSize,//开始的数据索引，比如当page=2 时offset=10 ，而pagesize我们定义为10，则现在为索引为10，也就是从第11条开始返回数据条目
         limit: pageSize//每页限制返回的数据条数
     }).then(data => {
@@ -94,7 +100,14 @@ router.post('/deletegoodsbyid', passport.authenticate("jwt", { session: false })
 router.get('/getgoodsbyid', (req, res) => {
     let id = req.query.id || 0
     Goods.findOne({
-        where: { id: id }
+        where: { id: id },
+        include: [{
+            model: Type,
+            as: 'goodstype'
+        }, {
+            model: Img,
+            as: 'imgs'
+        }],
     }).then(data => {
         return res.status(200).json({ status: 1, msg: '查询成功', data: data })
     })
