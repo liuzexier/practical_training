@@ -1,9 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser')
 const passport = require('passport')
+const fileUpload = require('express-fileupload');
 
 const app = express();
 app.use(express.static('assets'))
+//上传的文件路径
+app.use(express.static('client/public'))
+// 使用 express-fileupload 中间件
+app.use(fileUpload());
 
 // 引入user
 const users = require('./routers/api/users')
@@ -13,6 +18,8 @@ const admins = require('./routers/api/admins')
 const types = require('./routers/api/types')
 // 引入goods
 const goods = require('./routers/api/goods')
+//引入 upload
+const upload = require('./routers/api/upload')
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
@@ -38,6 +45,7 @@ app.use('/api/users', users)
 app.use('/api/admins', admins)
 app.use('/api/types', types)
 app.use('/api/goods', goods)
+app.use('/api/upload', upload)
 
 const port = process.env.PORT || 5000
 
