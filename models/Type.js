@@ -3,7 +3,8 @@ class Type extends Model { }
 Type.init({
     id: {
         type: Sequelize.INTEGER(11),
-        primaryKey: true
+        primaryKey: true,
+        autoIncrement: true
     },
     name: Sequelize.STRING(20)
 }, {

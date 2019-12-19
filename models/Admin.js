@@ -4,7 +4,8 @@ class Admin extends Model { }
 Admin.init({
     id: {
         type: Sequelize.INTEGER(11),
-        primaryKey: true
+        primaryKey: true,
+        autoIncrement: true
     },
     admin_name: Sequelize.STRING(20),
     password: Sequelize.STRING(20),

@@ -3,7 +3,8 @@ class Img extends Model { }
 Img.init({
     id: {
         type: Sequelize.INTEGER(11),
-        primaryKey: true
+        primaryKey: true,
+        autoIncrement: true
     },
     url: Sequelize.STRING(255),
     goods_id: Sequelize.INTEGER(11)

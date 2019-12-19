@@ -3,7 +3,8 @@ class Goods extends Model { }
 Goods.init({
     id: {
         type: Sequelize.INTEGER(11),
-        primaryKey: true
+        primaryKey: true,
+        autoIncrement: true
     },
     title: Sequelize.STRING(20),
     type_id: Sequelize.INTEGER(11),

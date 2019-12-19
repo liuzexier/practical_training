@@ -4,17 +4,18 @@ class User extends Model { }
 User.init({
     id: {
         type: Sequelize.INTEGER(11),
-        primaryKey: true
+        primaryKey: true,
+        autoIncrement: true
     },
     name: Sequelize.STRING(20),
     password: Sequelize.STRING(20),
     email: Sequelize.STRING(20),
     phone: Sequelize.STRING(15),
-    identity:Sequelize.STRING(20),
+    identity: Sequelize.STRING(20),
     paypin: Sequelize.STRING(6),
     avatar: {
-        type:Sequelize.STRING(50),
-        defaultValue:'/img/default_avatar.png'
+        type: Sequelize.STRING(50),
+        defaultValue: '/img/default_avatar.png'
     },
 }, {
     sequelize,
