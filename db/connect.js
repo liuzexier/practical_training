@@ -10,6 +10,9 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
         idle: 30000
     }
 });
+
 const Model = Sequelize.Model
 const Op = Sequelize.Op
+
+// const Transaction = Sequelize.Transaction
 module.exports = { sequelize, Sequelize, Model, Op }

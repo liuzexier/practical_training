@@ -20,6 +20,12 @@ const types = require('./routers/api/types')
 const goods = require('./routers/api/goods')
 //引入 upload
 const upload = require('./routers/api/upload')
+//引入 cart
+const cart = require('./routers/api/carts')
+//引入 order
+const order = require('./routers/api/orders')
+
+require('./models/related/index')
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
@@ -46,6 +52,8 @@ app.use('/api/admins', admins)
 app.use('/api/types', types)
 app.use('/api/goods', goods)
 app.use('/api/upload', upload)
+app.use('/api/carts', cart)
+app.use('/api/orders', order)
 
 const port = process.env.PORT || 5000
 

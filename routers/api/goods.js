@@ -5,13 +5,6 @@ const { Type } = require('../../models/Type')
 const passport = require('passport')
 const { Img } = require('../../models/Img')
 
-// hasMany
-Type.hasMany(Goods, { foreignKey: 'type_id', as: 'goods' })
-//belongsTo
-Goods.belongsTo(Type, { foreignKey: 'type_id', as: 'goodstype' })
-// hasMany
-Goods.hasMany(Img, { foreignKey: 'goods_id', as: 'imgs' })
-
 /**
  * $router GET /api/goods/findbypage
  * @desc return all goods

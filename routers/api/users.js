@@ -103,6 +103,35 @@ router.get('/getInfo', passport.authenticate("jwt", { session: false }), (req, r
         }
     })
 })
+/**
+ * $router POST /api/users/setpaypass
+ * @desc 返回请求的json数据
+ * @access  public
+ * @params paypass:string
+ */
+router.post('/setpaypass', passport.authenticate("jwt", { session: false }), (req, res) => {
+    let paypass = req.body.paypass
+    if (!req.user) {
+        return res.status(401).send({ status: 0, msg: '用户未登录' })
+    } else if (!paypass) {
+        return res.status(500).send({ status: 0, msg: '不能为空' })
+    }
+    new Promise((resolve, reject) => {
+        return bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(paypass, salt, (err, hash) => {
+                // Store hash in your password DB.
+                if (err) throw err;
+                paypass = hash
+                resolve(paypass)
+            });
+        })
+    }).then(paypass => {
+        return User.update({ paypin: paypass }, { where: { id: req.user.id } })
+    }).then(data => {
+        return res.send(data)
+    })
+})
+
 
 
 module.exports = router
