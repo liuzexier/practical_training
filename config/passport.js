@@ -2,7 +2,6 @@ const JwtStrategy = require('passport-jwt').Strategy,
     ExtractJwt = require('passport-jwt').ExtractJwt;
 
 const { User } = require('../models/User')
-const { Admin } = require('../models/Admin')
 
 const { secretOrKey } = require('./keys')
 

@@ -10,5 +10,13 @@ function verificationPaypin(paypass, user) {
         })
     })
 }
+function deleteUndefindKey(pram) {
+    for (key in pram) {
+        if (pram[key] === undefined || pram[key] === null) {
+            delete pram[key]
+        }
+    }
+    return pram
+}
 
-module.exports = { verificationPaypin }
+module.exports = { verificationPaypin, deleteUndefindKey }

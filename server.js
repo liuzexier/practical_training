@@ -24,6 +24,8 @@ const upload = require('./routers/api/upload')
 const cart = require('./routers/api/carts')
 //引入 order
 const order = require('./routers/api/orders')
+//引入 address
+const address = require('./routers/api/address')
 
 require('./models/related/index')
 
@@ -54,6 +56,7 @@ app.use('/api/goods', goods)
 app.use('/api/upload', upload)
 app.use('/api/carts', cart)
 app.use('/api/orders', order)
+app.use('/api/address', address)
 
 const port = process.env.PORT || 5000
 

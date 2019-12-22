@@ -71,7 +71,7 @@ router.post('/signin', (req, res) => {
             bcrypt.compare(password, user.password).then(isMatch => {
                 if (isMatch) {
                     // jwt.sign('规则','名字',{过期时间},function)
-                    const rule = { id: user.id, name: user.name, avatar: user.avatar, identity: user.identity }
+                    const rule = { id: user.id, name: user.name, avatar: user.avatar, identity: user.identity, paypin: user.paypin }
                     jwt.sign(rule, secretOrKey, { expiresIn: 3600 }, (err, token) => {
                         if (err) throw err
                         return res.status(200).json({ status: 1, msg: '登录成功', data: { user, token: 'Bearer ' + token } })
