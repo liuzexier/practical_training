@@ -77,7 +77,7 @@ router.post('/signin', (req, res) => {
                         return res.status(200).json({ status: 1, msg: '登录成功', data: { user, token: 'Bearer ' + token } })
                     })
                 } else {
-                    return res.status(400).json({ status: 0, msg: '用户名或密码不正确' })
+                    return res.status(200).json({ status: 0, msg: '用户名或密码不正确' })
                 }
             })
         } else {
