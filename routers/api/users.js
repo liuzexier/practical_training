@@ -132,6 +132,29 @@ router.post('/setpaypass', passport.authenticate("jwt", { session: false }), (re
     })
 })
 
-
+/**
+ * $router POST /api/users/findall
+ * @desc 返回请求的json数据
+ * @access  public
+ * @params page
+ */
+router.post('/findall', passport.authenticate("jwt", { session: false }), (req, res) => {
+    let page = Number(req.body.page) || 1
+    let pageSize = Number(req.body.pageSize) || 10
+    // let paypass = req.body.paypass
+    if (req.user.identity == 'admin') {
+        User.findAndCountAll({
+            where: { identity: 'admin' },
+            offset: (page - 1) * pageSize,//开始的数据索引，比如当page=2 时offset=10 ，而pagesize我们定义为10，则现在为索引为10，也就是从第11条开始返回数据条目
+            limit: pageSize, // 每页限制返回的数据条数
+            // subQuery: false
+            // distinct: true // 去除分页的重复
+        }).then((data) => {
+            res.status(200).json({ status: 1, msg: '查询成功', data })
+        })
+    } else {
+        res.status(200).json({ status: 0, msg: '你不是管理员' })
+    }
+})
 
 module.exports = router
