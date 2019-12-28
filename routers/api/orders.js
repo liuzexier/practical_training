@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { Order, Op } = require('../../models/Order')
 const { Goods } = require('../../models/Goods')
+const { User } = require('../../models/User')
 const { Cart } = require('../../models/Cart')
 const passport = require('passport')
 const { sequelize } = require('../../db/connect')
@@ -96,6 +97,33 @@ router.get('/user/findorderbypage', passport.authenticate("jwt", { session: fals
 })
 
 /**
+ * $router GET /api/orders/admin/findorderbyusername
+ * @desc 分页查询用户的订单
+ * @desc return orders
+ * @access  private
+ * @prams page userid
+ */
+router.get('/admin/findorderbyusername', passport.authenticate("jwt", { session: false }), (req, res) => {
+    let page = Number(req.query.page) || 1
+    let pageSize = Number(req.query.pageSize) || 10
+    let name = req.query.username
+    if (!req.user) {
+        return res.status(401).json({ status: 0, msg: '用户未登录' })
+    } else if (req.user.identity !== 'admin') {
+        return res.status(401).json({ status: 0, msg: '不是管理员' })
+    }
+    User.findAndCountAll({
+        where: { name: { [Op.like]: `%${name}%` } },
+        include: [{ model: Order, as: 'order', include: [{ model: Goods, as: 'goods' }] }],
+        offset: (page - 1) * pageSize,//开始的数据索引，比如当page=2 时offset=10 ，而pagesize我们定义为10，则现在为索引为10，也就是从第11条开始返回数据条目
+        limit: pageSize, // 每页限制返回的数据条数
+        distinct: false // 去除分页的重复
+    }).then(data => {
+        return res.status(200).json({ status: 1, msg: '查询成功', data })
+    })
+})
+
+/**
  * $router GET /api/orders/admin/findorderbypage
  * @desc 分页查询用户的订单
  * @desc return orders
@@ -103,15 +131,15 @@ router.get('/user/findorderbypage', passport.authenticate("jwt", { session: fals
  * @prams page
  */
 router.get('/admin/findorderbypage', passport.authenticate("jwt", { session: false }), (req, res) => {
-    let page = req.query.page || 1
-    let pageSize = req.query.pageSize || 10
+    let page = Number(req.query.page) || 1
+    let pageSize = Number(req.query.pageSize) || 10
     if (!req.user) {
         return res.status(401).json({ status: 0, msg: '用户未登录' })
     } else if (req.user.identity !== 'admin') {
         return res.status(401).json({ status: 0, msg: '不是管理员' })
     }
     Order.findAndCountAll({
-        include: { model: Goods, as: 'goods' },
+        include: [{ model: Goods, as: 'goods' }, { model: User, as: 'user' }],
         offset: (page - 1) * pageSize,//开始的数据索引，比如当page=2 时offset=10 ，而pagesize我们定义为10，则现在为索引为10，也就是从第11条开始返回数据条目
         limit: pageSize, // 每页限制返回的数据条数
         distinct: true // 去除分页的重复
@@ -171,7 +199,25 @@ router.post('/user/commitorders', passport.authenticate("jwt", { session: false 
     }).catch(err => {
         res.send(err)
     })
+})
 
+/**
+ * $router POST /api/orders/admin/updateorderstatus
+ * @desc 管理员修改订单状态
+ * @desc return 
+ * @access  private
+ * @prams orderid & status
+ */
+router.post('/admin/updateorderstatus', passport.authenticate("jwt", { session: false }), (req, res) => {
+    let user = req.user
+    if (user.identity !== 'admin') {
+        return res.status(200).json({ status: 0, msg: '您不是管理员' })
+    }
+    let id = req.body.orderid
+    let status = req.body.status
+    Order.update({ status }, { where: { id } }).then(data => {
+        return res.status(200).json({ status: 1, msg: '修改成功', data })
+    })
 })
 
 module.exports = router
