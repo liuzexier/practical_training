@@ -151,14 +151,14 @@ router.post('/updategoods', passport.authenticate("jwt", { session: false }), (r
 })
 
 /**
- * $router POST /api/goods/getgoodsbytype+
+ * $router POST /api/goods/getgoodsbytype
  * @desc 通过type_id查询商品
  * @desc return goods[]
  * @access  private
  * @prams typeid:number|string
  */
 router.get('/getgoodsbytype', (req, res) => {
-    let typeid = req.query.id || 0
+    let typeid = req.query.typeid || 0
     let page = Number(req.query.page) || 1
     let pageSize = Number(req.query.pageSize) || 10
     Goods.findAndCountAll({

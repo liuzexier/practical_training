@@ -40,9 +40,9 @@ router.post('/signup', (req, res) => {
                     email: req.body.email,
                     phone: req.body.phone,
                     paypin: null,
-                    identity: 'user'
+                    identity: 'admin'
                 }).then(user => {
-                    return res.status(200).json({ status: 0, msg: '注册成功', data: { user } })
+                    return res.status(200).json({ status: 1, msg: '注册成功', data: { user } })
                 })
             })
         }
@@ -55,15 +55,12 @@ router.post('/signup', (req, res) => {
  */
 router.post('/signin', (req, res) => {
     // console.log(req.body)
-    const email = req.body.email || ''
     const phone = req.body.phone || ''
     const password = req.body.password || ''
     //查询数据库
     User.findOne({
         where: {
-            [Op.or]: [
-                { email: email }, { phone: phone }, { identity: 'admin' }
-            ]
+            phone: phone, identity: 'admin'
         }
     }).then(user => {
         if (user) {
@@ -77,7 +74,7 @@ router.post('/signin', (req, res) => {
                         return res.status(200).json({ status: 1, msg: '登录成功', data: { user, token: 'Bearer ' + token } })
                     })
                 } else {
-                    return res.status(400).json({ status: 0, msg: '用户名或密码不正确' })
+                    return res.status(200).json({ status: 0, msg: '用户名或密码不正确' })
                 }
             })
         } else {
