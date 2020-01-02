@@ -17,8 +17,9 @@ const { verificationPaypin } = require('../../utils/baseUtils')
  */
 router.post('/createorderincart', passport.authenticate("jwt", { session: false }), (req, res) => {
     let id = Number(req.body.id)
+    // let ids = JSON.parse(req.body.ids)
     sequelize.transaction(t => {
-        return Cart.findOne({ where: id, include: { model: Goods, as: 'goods' }, transaction: t }).then(data => {
+        return Cart.findOne({ where: { id }, include: { model: Goods, as: 'goods' }, transaction: t }).then(data => {
             return Cart.destroy({ where: { id }, transaction: t }).then(() => {
                 return Order.create({ user_id: req.user.id, create_date: (new Date).valueOf(), status: 0, goods_id: data.goods_id, amount: data.amount, cost: data.amount * data.goods.price }, { transaction: t })
             })
@@ -73,15 +74,15 @@ router.post('/deleteorder', passport.authenticate("jwt", { session: false }), (r
 })
 
 /**
- * $router GET /api/orders/user/findorderbypage
+ * $router POST /api/orders/user/findorderbypage
  * @desc 分页查询用户的订单
  * @desc return orders
  * @access  private
  * @prams page
  */
-router.get('/user/findorderbypage', passport.authenticate("jwt", { session: false }), (req, res) => {
-    let page = req.query.page || 1
-    let pageSize = req.query.pageSize || 10
+router.post('/user/findorderbypage', passport.authenticate("jwt", { session: false }), (req, res) => {
+    let page = Number(req.body.page) || 1
+    let pageSize = Number(req.body.pageSize) || 10
     if (!req.user) {
         return res.status(401).json({ status: 0, msg: '用户未登录' })
     }

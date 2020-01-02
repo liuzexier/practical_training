@@ -6,6 +6,7 @@ const { sequelize } = require('../../db/connect')
 const { Cart, Op } = require('../../models/Cart')
 const { User } = require('../../models/User')
 const { Goods } = require('../../models/Goods')
+const { Img } = require('../../models/Img')
 const { verificationPaypin } = require('../../utils/baseUtils')
 
 /**
@@ -70,14 +71,15 @@ router.get('/findallcartbypage', (req, res) => {
  * @access  private
  * @params page & pageSize
  */
-router.get('/findusercartbypage', passport.authenticate("jwt", { session: false }), (req, res) => {
-    let page = Number(req.query.page) || 1
-    let pageSize = Number(req.query.pageSize) || 10
+router.post('/findusercartbypage', passport.authenticate("jwt", { session: false }), (req, res) => {
+    let page = Number(req.body.page) || 1
+    let pageSize = Number(req.body.pageSize) || 10
     let user_id = req.user.id
     Cart.findAndCountAll({
         include: [{
             model: Goods,
-            as: 'goods'
+            as: 'goods',
+            include: [{ model: Img, as: 'imgs' }]
         }],
         where: { status: 1, user_id },
         offset: (page - 1) * pageSize,//开始的数据索引，比如当page=2 时offset=10 ，而pagesize我们定义为10，则现在为索引为10，也就是从第11条开始返回数据条目
@@ -116,18 +118,37 @@ router.post('/findcartbyname', (req, res) => {
  * @access  private
  * @params ids[]
  */
-router.post('/deletecartbyids', passport.authenticate("jwt", { session: false }), (req, res) => {
-    let ids = JSON.parse(req.body.ids).map(item => {
-        let itemObj = {}
-        itemObj.id = item
-        itemObj.status = '0'
-        return itemObj
+// router.post('/deletecartbyids', passport.authenticate("jwt", { session: false }), (req, res) => {
+//     let ids = JSON.parse(req.body.ids).map(item => {
+//         let itemObj = {}
+//         itemObj.id = item
+//         itemObj.status = '0'
+//         return itemObj
+//     })
+//     Cart.bulkCreate(ids, { updateOnDuplicate: ['status'] }).then(data => {
+//         return res.status(200).json({ status: 1, msg: '删除成功', data })
+//     }).catch(err => {
+//         return res.status(500).json(err)
+//     });
+// })
+/**
+ * $router POST /api/carts/deletecartbyid
+ * @desc return cart
+ * @access  private
+ * @params id
+ */
+router.post('/deletecartbyid', passport.authenticate("jwt", { session: false }), (req, res) => {
+    let id = req.body.cartid
+    sequelize.transaction(t => {
+        return Cart.findOne({ where: { id }, include: { model: Goods, as: 'goods' }, transaction: t }).then(data => {
+            let num = data.goods.count + data.amount
+            return Cart.destroy({ where: { id }, transaction: t }).then(() => {
+                return Goods.update({ count: num }, { where: { id: data.goods_id }, transaction: t })
+            })
+        })
+    }).then(data => {
+        return res.status(200).json({ status: 1, msg: '删除成功' })
     })
-    Cart.bulkCreate(ids, { updateOnDuplicate: ['status'] }).then(data => {
-        return res.status(200).json({ status: 1, msg: '删除成功', data })
-    }).catch(err => {
-        return res.status(500).json(err)
-    });
 })
 
 /**

@@ -20,9 +20,8 @@ router.post('/signup', (req, res) => {
             [Op.or]: [{ email: email }, { phone: phone }]
         }
     }).then(user => {
-
         if (user) {
-            return res.status(400).json({ status: 1, msg: '邮箱或手机号已被占用' })
+            return res.status(200).json({ status: 1, msg: '邮箱或手机号已被占用' })
         } else {
             new Promise((resolve, reject) => {
                 bcrypt.genSalt(10, (err, salt) => {
@@ -40,9 +39,9 @@ router.post('/signup', (req, res) => {
                     email: req.body.email,
                     phone: req.body.phone,
                     paypin: null,
-                    identity: 'admin'
+                    identity: 'user'
                 }).then(user => {
-                    return res.status(200).json({ status: 0, msg: '注册成功', data: { user } })
+                    return res.status(200).json({ status: 1, msg: '注册成功', data: { user } })
                 })
             })
         }
@@ -62,8 +61,9 @@ router.post('/signin', (req, res) => {
     User.findOne({
         where: {
             [Op.or]: [
-                { email: email }, { phone: phone }, { identity: 'user' }
-            ]
+                { email: email }, { phone: phone }
+            ],
+            [Op.and]: { identity: 'user' }
         }
     }).then(user => {
         if (user) {
